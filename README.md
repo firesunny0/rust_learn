@@ -1,2 +1,2 @@
 # rust_learn
-notes about rust
+notes: Data structure and algorithm
