@@ -2,7 +2,9 @@
 notes about rust
 
 ## 该仓库总共有五个分支
-1. dev
+1. main
+	入门rust的同时，根据自己需要实现的一些工具
+2. dev
 	实现rust在stm32f4上的demo
 2. rustlings
 	通过例子学习rust
