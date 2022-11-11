@@ -37,10 +37,14 @@ impl Sandbox for MainWin {
         // title
         // todo : theme ? message ?
         let main_win_title = format!("Process {}", procedure.current_index);
-        display_content = display_content.push(text(&main_win_title));
-        // task && result
         display_content = display_content
-            .push(procedure.view(self.debug).map(Message::ProcessMsg));
+            .push(text(&main_win_title).height(Length::FillPortion(1)));
+        // task && result
+        display_content = display_content.push(
+            container(procedure.view(self.debug).map(Message::ProcessMsg))
+                .width(Length::Fill)
+                .height(Length::FillPortion(8)),
+        );
         // controls && hint
         let display_content: Element<_> = display_content
             .push(
@@ -48,30 +52,36 @@ impl Sandbox for MainWin {
                     container(button(if procedure.has_previous() {
                         "Back"
                     } else {
-                        ""
+                        "None"
                     })),
                     container(text("input audio wav display")),
                     container(button(if procedure.has_next() {
                         "Next"
                     } else {
-                        ""
+                        "None"
                     })),
                 ]
                 .width(Length::Fill)
+                .height(Length::FillPortion(2))
                 .spacing(20),
             )
+            .spacing(20)
+            .padding(20)
             .into();
 
-        let scrollable = scrollable(
-            container(if self.debug {
-                display_content.explain(Color::BLACK)
-            } else {
-                display_content
-            })
-            .width(Length::Fill)
-            .center_x(),
-        );
-        container(scrollable).height(Length::Fill).center_y().into()
+        // let scrollable = scrollable(
+        container(if self.debug {
+            display_content.explain(Color::BLACK)
+        } else {
+            display_content
+        })
+        .width(Length::Fill)
+        .center_x()
+        // );
+        .height(Length::Fill)
+        .center_y()
+        .into()
+        // container(scrollable).height(Length::Fill).center_y().into()
     }
 
     fn update(&mut self, event: Message) {
@@ -102,7 +112,10 @@ impl Procedure {
         Procedure {
             processes: vec![
                 Process::Welcome {
-                    image_path: "tour/images/ferris.png",
+                    image_path: format!(
+                        "{}/images/ferris.png",
+                        env!("CARGO_MANIFEST_DIR")
+                    ),
                     hint: "this is a welcome",
                 },
                 Process::Finished {
@@ -154,7 +167,7 @@ impl Procedure {
 
 enum Process {
     Welcome {
-        image_path: &'static str,
+        image_path: String,
         hint: &'static str,
     },
     Finished {
@@ -193,9 +206,12 @@ impl<'a> Process {
         let mut display_container = row![];
         match self {
             Process::Welcome { image_path, hint } => {
+                if log_enabled!(Level::Info) {
+                    info!("image path: {}", image_path);
+                }
                 display_container = display_container.push(
                     column![
-                        image(image_path).height(Length::FillPortion(8)),
+                        container(image(image_path).width(Length::Units(300))),
                         text(hint).height(Length::Fill)
                     ]
                     .padding(20)
