@@ -95,8 +95,8 @@ impl Sandbox for MainWin {
         match event {
             Message::BackPressed => self.procedure.go_back(),
             Message::NextPressed => self.procedure.go_next(),
-            Message::ProcessMsg(processMsg) => {
-                self.procedure.update(processMsg, &mut self.debug);
+            Message::ProcessMsg(process_msg) => {
+                self.procedure.update(process_msg, &mut self.debug);
             }
         }
     }
@@ -182,8 +182,8 @@ enum Process {
     },
 }
 
-impl<'a> Process {
-    fn update(&mut self, msg: ProcessMessage, debug: &mut bool) {
+impl Process {
+    fn update(&mut self, msg: ProcessMessage, _debug: &mut bool) {
         match msg {
             ProcessMessage::Welcome { image_path, hint } => {
                 if log_enabled!(Level::Info) {
@@ -206,7 +206,7 @@ impl<'a> Process {
     fn can_continue(&self) -> bool {
         true
     }
-    fn view(&self, debug: bool) -> Element<ProcessMessage> {
+    fn view(&self, _debug: bool) -> Element<ProcessMessage> {
         if log_enabled!(Level::Info) {
             info!("process view");
         }
@@ -223,7 +223,7 @@ impl<'a> Process {
                         container(
                             text(hint).horizontal_alignment(Horizontal::Center)
                         )
-                        .style(MyContainerStyle::debug.to_fn())
+                        .style(MyContainerStyle::Debug.to_fn())
                     ]
                     .padding(20)
                     .align_items(Alignment::Center)
@@ -251,7 +251,7 @@ impl<'a> Process {
                     .align_items(Alignment::Center)
                     .padding(20),
                 )
-                .style(MyContainerStyle::debug.to_fn())
+                .style(MyContainerStyle::Debug.to_fn())
                 .width(Length::FillPortion(3)),
             )
             .padding(20)
@@ -278,7 +278,7 @@ fn button<'a, Message: Clone>(label: &str) -> Button<'a, Message> {
     .width(Length::Units(100))
 }
 
-pub mod MyColor {
+pub mod my_color {
     use iced::Color;
     pub const BLUE: Color = Color {
         r: 0_f32,
@@ -301,17 +301,17 @@ pub mod MyColor {
 }
 
 pub enum MyContainerStyle {
-    debug,
+    Debug,
 }
 
 impl MyContainerStyle {
     fn to_fn(&self) -> fn(&Theme) -> container::Appearance {
         match self {
-            MyContainerStyle::debug => |_| container::Appearance {
-                text_color: Some(MyColor::BLUE),
-                background: Some(Background::Color(MyColor::RED)),
+            MyContainerStyle::Debug => |_| container::Appearance {
+                text_color: Some(my_color::BLUE),
+                background: Some(Background::Color(my_color::RED)),
                 border_width: 5.0,
-                border_color: MyColor::GREEN,
+                border_color: my_color::GREEN,
                 border_radius: 5.0,
             },
         }
