@@ -113,11 +113,6 @@ optional = true
 iced_wgpu = { version = "0.6", path = "wgpu", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-<<<<<<< Updated upstream
-
-=======
-
->>>>>>> Stashed changes
 
 iced_wgpu = { version = "0.6", path = "wgpu", features = [
     "webgl",

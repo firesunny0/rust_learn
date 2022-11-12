@@ -219,9 +219,10 @@ impl<'a> Process {
                     column![
                         container(image(image_path).width(Length::Fill))
                             .height(Length::FillPortion(8)),
-                        text(hint)
-                            .height(Length::FillPortion(2))
-                            .horizontal_alignment(Horizontal::Center)
+                        container(
+                            text(hint).horizontal_alignment(Horizontal::Center)
+                        )
+                        .Appearance{text_color: Color::Blue, background: Color::Red, border_width:5}
                     ]
                     .padding(20)
                     .align_items(Alignment::Center)
