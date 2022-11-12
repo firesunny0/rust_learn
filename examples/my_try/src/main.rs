@@ -1,10 +1,11 @@
 use iced::alignment::{Horizontal, Vertical};
-use iced::widget::scrollable;
+// use iced::widget::scrollable;
 use iced::widget::{column, row};
 use iced::widget::{container, image, text, Button};
-use iced::{alignment, Alignment, Color, Length};
+use iced::{alignment, Alignment, Background, Color, Length, Theme};
 use iced::{Element, Sandbox, Settings};
-use log::{debug, error, info, log_enabled, Level};
+// use iced_cored::{Appearance, StyleSheet};
+use log::{info, log_enabled, Level};
 use std::env::set_var;
 pub fn main() -> iced::Result {
     set_var("RUST_LOG", "debug");
@@ -22,7 +23,7 @@ impl Sandbox for MainWin {
     fn new() -> MainWin {
         MainWin {
             procedure: Procedure::new(),
-            debug: false,
+            debug: true,
         }
     }
 
@@ -222,7 +223,7 @@ impl<'a> Process {
                         container(
                             text(hint).horizontal_alignment(Horizontal::Center)
                         )
-                        .Appearance{text_color: Color::Blue, background: Color::Red, border_width:5}
+                        .style(MyContainerStyle::debug.to_fn())
                     ]
                     .padding(20)
                     .align_items(Alignment::Center)
@@ -250,6 +251,7 @@ impl<'a> Process {
                     .align_items(Alignment::Center)
                     .padding(20),
                 )
+                .style(MyContainerStyle::debug.to_fn())
                 .width(Length::FillPortion(3)),
             )
             .padding(20)
@@ -275,3 +277,64 @@ fn button<'a, Message: Clone>(label: &str) -> Button<'a, Message> {
     .padding(12)
     .width(Length::Units(100))
 }
+
+pub mod MyColor {
+    use iced::Color;
+    pub const BLUE: Color = Color {
+        r: 0_f32,
+        g: 0.0,
+        b: 1.0,
+        a: 1.0,
+    };
+    pub const RED: Color = Color {
+        r: 1_f32,
+        g: 0.0,
+        b: 0.0,
+        a: 1.0,
+    };
+    pub const GREEN: Color = Color {
+        r: 0_f32,
+        g: 1.0,
+        b: 0.0,
+        a: 1.0,
+    };
+}
+
+pub enum MyContainerStyle {
+    debug,
+}
+
+impl MyContainerStyle {
+    fn to_fn(&self) -> fn(&Theme) -> container::Appearance {
+        match self {
+            MyContainerStyle::debug => |_| container::Appearance {
+                text_color: Some(MyColor::BLUE),
+                background: Some(Background::Color(MyColor::RED)),
+                border_width: 5.0,
+                border_color: MyColor::GREEN,
+                border_radius: 5.0,
+            },
+        }
+    }
+}
+
+// impl Default for MyContainerStyle {
+//     fn default() -> Self {
+//         MyContainerStyle::debug
+//     }
+// }
+
+// impl container::StyleSheet for MyContainerStyle {
+//     type Style = Box<MyContainerStyle>;
+//     fn appearance(&self, style: &Self::Style) -> container::Appearance {
+//         match **style {
+//             MyContainerStyle::debug => container::Appearance {
+//                 text_color: Some(MyColor::BLUE),
+//                 background: Some(Background::Color(MyColor::RED)),
+//                 border_width: 5.0,
+//                 border_color: MyColor::GREEN,
+//                 border_radius: 5.0,
+//             },
+//         }
+//     }
+// }

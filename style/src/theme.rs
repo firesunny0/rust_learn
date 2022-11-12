@@ -111,7 +111,7 @@ impl application::StyleSheet for fn(&Theme) -> application::Appearance {
         (self)(style)
     }
 }
-
+//
 impl From<fn(&Theme) -> application::Appearance> for Application {
     fn from(f: fn(&Theme) -> application::Appearance) -> Self {
         Self::Custom(Box::new(f))
