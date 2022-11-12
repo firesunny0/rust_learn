@@ -1,7 +1,8 @@
+use iced::alignment::{Horizontal, Vertical};
 use iced::widget::scrollable;
 use iced::widget::{column, row};
 use iced::widget::{container, image, text, Button};
-use iced::{alignment, Color, Length};
+use iced::{alignment, Alignment, Color, Length};
 use iced::{Element, Sandbox, Settings};
 use log::{debug, error, info, log_enabled, Level};
 use std::env::set_var;
@@ -37,8 +38,13 @@ impl Sandbox for MainWin {
         // title
         // todo : theme ? message ?
         let main_win_title = format!("Process {}", procedure.current_index);
-        display_content = display_content
-            .push(text(&main_win_title).height(Length::FillPortion(1)));
+        display_content = display_content.push(
+            text(&main_win_title)
+                .width(Length::Fill)
+                .horizontal_alignment(Horizontal::Center)
+                .vertical_alignment(Vertical::Center)
+                .height(Length::FillPortion(1)),
+        );
         // task && result
         display_content = display_content.push(
             container(procedure.view(self.debug).map(Message::ProcessMsg))
@@ -49,19 +55,19 @@ impl Sandbox for MainWin {
         let display_content: Element<_> = display_content
             .push(
                 row![
-                    container(button(if procedure.has_previous() {
+                    button(if procedure.has_previous() {
                         "Back"
                     } else {
                         "None"
-                    })),
-                    container(text("input audio wav display")),
-                    container(button(if procedure.has_next() {
-                        "Next"
-                    } else {
-                        "None"
-                    })),
+                    }),
+                    text("input audio wav display")
+                        .horizontal_alignment(Horizontal::Center)
+                        .vertical_alignment(Vertical::Center)
+                        .width(Length::Fill),
+                    button(if procedure.has_next() { "Next" } else { "None" }),
                 ]
                 .width(Length::Fill)
+                .align_items(Alignment::Center)
                 .height(Length::FillPortion(2))
                 .spacing(20),
             )
@@ -211,11 +217,15 @@ impl<'a> Process {
                 }
                 display_container = display_container.push(
                     column![
-                        container(image(image_path).width(Length::Units(300))),
-                        text(hint).height(Length::Fill)
+                        container(image(image_path).width(Length::Fill))
+                            .height(Length::FillPortion(8)),
+                        text(hint)
+                            .height(Length::FillPortion(2))
+                            .horizontal_alignment(Horizontal::Center)
                     ]
                     .padding(20)
-                    .width(Length::Fill),
+                    .align_items(Alignment::Center)
+                    .width(Length::FillPortion(7)),
                 )
             }
             Process::Finished { hint } => {
@@ -225,8 +235,21 @@ impl<'a> Process {
         };
         display_container
             .push(
-                container(column![text("Right"), text("Wrong")].padding(20))
-                    .width(Length::FillPortion(1)),
+                container(
+                    column![
+                        text("Right")
+                            .horizontal_alignment(Horizontal::Center)
+                            .height(Length::Fill)
+                            .width(Length::Fill),
+                        text("Wrong")
+                            .height(Length::Fill)
+                            .width(Length::Fill)
+                            .horizontal_alignment(Horizontal::Center)
+                    ]
+                    .align_items(Alignment::Center)
+                    .padding(20),
+                )
+                .width(Length::FillPortion(3)),
             )
             .padding(20)
             .into()
